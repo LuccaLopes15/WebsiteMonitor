@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+	fmt.Println("Bem vindo ao GoMonitor!")
+
 	for {
 		exibirMenu()
 		comando := lerComando()
@@ -21,9 +23,8 @@ func main() {
 		case 2:
 			verificarUrlsMonitoradas()
 		case 3:
-			adicionarUrlNoMonitoramento()
-		case 4:
-			exibirLogs()
+			novaUrl := lerNovaUrl()
+			adicionarUrlNoMonitoramento(novaUrl)
 		case 5:
 			encerrar()
 		}
@@ -31,7 +32,6 @@ func main() {
 }
 
 func exibirMenu() {
-	fmt.Println("Bem vindo ao GoMonitor!")
 	fmt.Println("Escolha uma das opções:")
 	fmt.Println("1 - Iniciar monitoramento")
 	fmt.Println("2 - Verificar urls monitoradas")
@@ -44,6 +44,13 @@ func lerComando() int {
 	var comando int
 	fmt.Scan(&comando)
 	return comando
+}
+
+func lerNovaUrl() string {
+	fmt.Println("Digite a nova url que deseja monitorar: ")
+	var novaUrl string
+	fmt.Scan(&novaUrl)
+	return novaUrl
 }
 
 func iniciarMonitoramento() {
@@ -145,15 +152,30 @@ func lerSitesParaMonitorar() ([]string, bool) {
 }
 
 func verificarUrlsMonitoradas() {
+	sites, deuErro := lerSitesParaMonitorar()
 
+	if deuErro {
+		return
+	}
+
+	fmt.Println("Urls monitoradas: ")
+	for _, site := range sites {
+		fmt.Println(site)
+	}
 }
 
-func adicionarUrlNoMonitoramento() {
+func adicionarUrlNoMonitoramento(novaUrl string) {
+	arquivo, err := os.OpenFile("sites.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
-}
+	deuErro := gerouErro(err, "Erro ao abrir arquivo de sites")
 
-func exibirLogs() {
+	if deuErro {
+		return
+	}
 
+	defer arquivo.Close()
+
+	arquivo.WriteString("\n" + novaUrl)
 }
 
 func encerrar() {
