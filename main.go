@@ -76,6 +76,7 @@ func iniciarMonitoramento() {
 
 		if deuErro {
 			escreveNoLog(site, false)
+			continue
 		}
 
 		if res.StatusCode == 200 {
@@ -119,11 +120,11 @@ func lerSitesParaMonitorar() ([]string, bool) {
 
 	result := gerouErro(err, "Erro ao abrir arquivo")
 
-	defer arquivo.Close()
-
 	if result {
 		return sites, true
 	}
+
+	defer arquivo.Close()
 
 	scanner := bufio.NewScanner(arquivo)
 
@@ -179,7 +180,7 @@ func adicionarUrlNoMonitoramento(novaUrl string) {
 }
 
 func encerrar() {
-	os.Exit(1)
+	os.Exit(0)
 }
 
 func gerouErro(err error, message string) bool {
